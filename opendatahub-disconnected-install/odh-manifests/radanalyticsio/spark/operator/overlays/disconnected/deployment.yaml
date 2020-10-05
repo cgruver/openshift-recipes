@@ -1,0 +1,3 @@
+- op: add
+  path: /spec/template/spec/containers/0/image
+  value: --LOCAL_REGISTRY--/radanalyticsio/spark-operator:1.0.7

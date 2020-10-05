@@ -1,0 +1,9 @@
+- op: add
+  path: /spec/tags/0/annotations
+  value: 
+    openshift.io/imported-from: --LOCAL_REGISTRY--/odh-jupyterhub/s2i-spark-minimal-notebook
+- op: add
+  path: /spec/tags/0/from
+  value: 
+    name: "--LOCAL_REGISTRY--/odh-jupyterhub/s2i-spark-minimal-notebook:py36-spark2.4.5-hadoop2.7.3"
+    kind: DockerImage

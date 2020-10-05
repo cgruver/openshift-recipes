@@ -1,0 +1,10 @@
+- op: add
+  path: /spec/tags/0/annotations
+  value: 
+    openshift.io/imported-from: --LOCAL_REGISTRY--/odh-jupyterhub/jupyterhub-img
+- op: add
+  path: /spec/tags/0/from
+  value: 
+    name: --LOCAL_REGISTRY--/odh-jupyterhub/jupyterhub-img:3.0.7-b7db22b
+    kind: DockerImage
+

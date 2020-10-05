@@ -1,0 +1,152 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: grafana-operator
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+      - endpoints
+      - persistentvolumeclaims
+      - configmaps
+      - secrets
+      - serviceaccounts
+      - configmaps
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - update
+      - patch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - deployments/finalizers
+      - daemonsets
+      - replicasets
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - watch
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+      - routes/custom-host
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - watch
+      - create
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - watch
+  - apiGroups:
+      - integreatly.org
+    resources:
+      - grafanas
+      - grafanas/status
+      - grafanas/finalizers
+      - grafanadashboards
+      - grafanadatasources
+      - grafanadatasources/status
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - watch
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grafana-operator
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: grafana-operator
+subjects:
+- kind: ServiceAccount
+  name: grafana-operator
+roleRef:
+  kind: Role
+  name: grafana-operator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: grafana-operator
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: grafana-operator
+    spec:
+      serviceAccountName: grafana-operator
+      containers:
+        - name: grafana-operator
+          image: --LOCAL_REGISTRY--/integreatly/grafana-operator:v3.5.0
+          ports:
+            - containerPort: 60000
+              name: metrics
+          command:
+            - grafana-operator
+          imagePullPolicy: Always
+          env:
+            - name: TEMPLATE_PATH
+              value: /usr/local/bin/templates
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "grafana-operator"

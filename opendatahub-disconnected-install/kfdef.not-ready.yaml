@@ -1,0 +1,77 @@
+apiVersion: kfdef.apps.kubeflow.org/v1
+kind: KfDef
+metadata:
+  annotations:
+    kfctl.kubeflow.io/force-delete: 'false'
+  name: opendatahub
+  namespace: my-opendatahub
+spec:
+  applications:
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: odh-common
+      name: odh-common
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: radanalyticsio/spark/cluster
+      name: radanalyticsio-cluster
+    - kustomizeConfig:
+        overlays:
+          - disconnected
+        repoRef:
+          name: manifests
+          path: radanalyticsio/spark/operator
+      name: radanalyticsio-spark-operator
+    - kustomizeConfig:
+        parameters:
+          - name: s3_endpoint_url
+            value: rook-ceph-rgw-s3-object-store.rook-ceph.svc:8080
+          - name: storage_class
+            value: rook-ceph-block
+        overlays:
+          - disconnected
+        repoRef:
+          name: manifests
+          path: jupyterhub/jupyterhub
+      name: jupyterhub
+    - kustomizeConfig:
+        overlays:
+          - disconnected
+        repoRef:
+          name: manifests
+          path: jupyterhub/notebook-images
+      name: notebook-images
+    - kustomizeConfig:
+        parameters:
+        - name: namespace
+          value: my-opendatahub
+        repoRef:
+          name: manifests
+          path: prometheus/operator
+      name: prometheus-operator
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: grafana/grafana
+      name: grafana-operator
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: odhseldon/cluster
+      name: odhseldon
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: ai-library/cluster
+      name: ai-library-cluster
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: ai-library/operator
+      name: ai-library-operator
+  repos:
+    - name: manifests
+      uri: --MANIFEST_URL--
+  version: v0.8.0

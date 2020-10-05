@@ -1,0 +1,9 @@
+- op: add
+  path: /spec/tags/0/annotations
+  value: 
+    openshift.io/imported-from: --LOCAL_REGISTRY--/odh-jupyterhub/nbviewer
+- op: add
+  path: /spec/tags/0/from
+  value: 
+    name: --LOCAL_REGISTRY--/odh-jupyterhub/nbviewer:latest
+    kind: DockerImage

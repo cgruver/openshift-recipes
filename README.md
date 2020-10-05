@@ -1,1 +1,1 @@
-# openshift-recipies
+# openshift-recipes
